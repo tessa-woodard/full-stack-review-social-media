@@ -5,19 +5,33 @@ import Edit from './Edit'
 //TODO Display post or edit, build out methods
 
 class PostContainer extends React.Component {
-  constructor(props) {
-    super(props)
+  constructor() {
+    super()
     this.state = {
       isEditing: false,
     }
   }
 
   toggleEdit = () => {
-    //something goes here
+    this.setState({
+      isEditing: !this.state.isEditing,
+    })
   }
 
   render() {
-    return <></>
+    return this.state.isEditing ? (
+      <Edit
+        handleEdit={this.props.handleEdit}
+        post={this.props.post}
+        toggleEdit={this.toggleEdit}
+      />
+    ) : (
+        <Post
+          handleDelete={this.props.handleDelete}
+          post={this.props.post}
+          toggleEdit={this.toggleEdit}
+        />
+      )
   }
 }
 

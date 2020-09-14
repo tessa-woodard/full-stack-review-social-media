@@ -1,4 +1,8 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import { loginUser } from '../ducks/authReducer'
+import { connect } from 'react-redux'
+import axios from 'axios'
 
 //TODO Write all methods, connect to store, connect methods to JSX
 class Landing extends Component {
@@ -11,9 +15,22 @@ class Landing extends Component {
     //this.handleLogin = this.handleLogin.bind(this)
   }
 
-  handleInput = () => {}
+  handleInput = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    })
+  }
 
-  handleLogin = () => {}
+  handleLogin = () => {
+    const { email, password } = this.state
+    axios.post('/auth/login', { email, password }).then(res => {
+      this.props.loginUser(res.data)
+      this.props.history.push('/dashboard')
+    })
+      .catch((err) => {
+        alert(err)
+      })
+  }
 
   render() {
     return (
@@ -25,8 +42,8 @@ class Landing extends Component {
                 maxLength="100"
                 placeholder="Enter Email"
                 name="email"
-                onChange={() => {
-                  //something goes here
+                onChange={(e) => {
+                  this.handleInput(e)
                 }}
               />
               <input
@@ -34,14 +51,14 @@ class Landing extends Component {
                 maxLength="20"
                 placeholder="Enter Password"
                 name="password"
-                onChange={() => {
-                  //something goes here
+                onChange={(e) => {
+                  this.handleInput(e)
                 }}
               />
             </div>
             <button
               onClick={() => {
-                //something goes here
+                this.handleLogin()
               }}
               className="input-container-button"
             >
@@ -50,7 +67,8 @@ class Landing extends Component {
           </div>
           <div className="flex-horizontal link">
             <span>Don't have an account? Register here: </span>
-            {/* TODO Link to register page. className='input-container-button'  */}
+            <Link className="input-container-button" to="/register" >
+            </Link>
           </div>
         </div>
       </div>
@@ -58,4 +76,4 @@ class Landing extends Component {
   }
 }
 
-export default Landing
+export default connect(null, { loginUser })(Landing)

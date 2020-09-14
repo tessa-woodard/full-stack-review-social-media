@@ -1,4 +1,8 @@
 import React, { Component } from 'react'
+import axios from 'axios'
+import { loginUser } from '../ducks/authReducer'
+import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 class Register extends Component {
   constructor() {
@@ -9,9 +13,22 @@ class Register extends Component {
     }
   }
 
-  handleInput = (event) => {}
+  handleInput = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    })
+  }
 
-  handleRegister = () => {}
+  handleRegister = () => {
+    const { email, password } = this.state
+    axios.post('/auth/register', { email, password }).then(res => {
+      this.props.loginUser(res.data)
+      this.props.history.push('/dashboard')
+    })
+      .catch((err) => {
+        alert(err)
+      })
+  }
 
   render() {
     return (
@@ -23,8 +40,8 @@ class Register extends Component {
                 maxLength="100"
                 placeholder="Enter Email"
                 name="email"
-                onChange={() => {
-                  //something goes here
+                onChange={(e) => {
+                  this.handleInput(e)
                 }}
               />
               <input
@@ -32,14 +49,14 @@ class Register extends Component {
                 maxLength="20"
                 placeholder="Enter Password"
                 name="password"
-                onChange={() => {
-                  //something goes here
+                onChange={(e) => {
+                  this.handleInput(e)
                 }}
               />
             </div>
             <button
               onClick={() => {
-                //something goes here
+                this.handleRegister()
               }}
               className="input-container-button"
             >
@@ -48,7 +65,8 @@ class Register extends Component {
           </div>
           <div className="flex-horizontal link">
             <span>Already have an account? login here: </span>
-            {/* TODO Link to landing. className='input-container-button' */}
+            <Link className="input-container-button" to="/register" >
+            </Link>
           </div>
         </div>
       </div>
@@ -56,4 +74,4 @@ class Register extends Component {
   }
 }
 
-export default Register
+export default connect(null, { loginUser })(Register)
